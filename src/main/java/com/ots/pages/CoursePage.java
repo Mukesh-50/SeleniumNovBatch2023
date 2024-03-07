@@ -75,7 +75,9 @@ public class CoursePage
 	public void courseDeactivate() throws InterruptedException
 	{
 		Thread.sleep(5000);
+		
 		Utility.getElement(driver, checkBoxCourseToDeactivate).click();
+		
 		Thread.sleep(5000);
 		
 		Utility.getElement(driver, deactivateCourseButton).click();
