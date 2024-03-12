@@ -38,7 +38,6 @@ public class BrowserFactory
 		return driver;
 	}
 	
-	
 	public static WebDriver startBrowser(String appURL) 
 	{
 		WebDriver driver = new ChromeDriver();

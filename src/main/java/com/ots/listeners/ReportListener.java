@@ -26,6 +26,7 @@ public class ReportListener implements ITestListener
 		extentTest=extent.createTest(result.getMethod().getMethodName());
 		
 		test.set(extentTest);
+		
 	}
 
 	public void onTestSuccess(ITestResult result) 
