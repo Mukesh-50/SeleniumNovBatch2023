@@ -15,7 +15,7 @@ public class BaseClass
 	
 	
 	@BeforeClass
-	public void setup(String browser)
+	public void setup()
 	{
 		System.out.println("******** LOG:INFO- Running Setup ********");
 		
