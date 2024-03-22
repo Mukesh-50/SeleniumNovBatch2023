@@ -13,7 +13,8 @@ public class LoginToApplication extends BaseClass
 
 	@Test(priority = 1,dataProvider = "LoginCredentials",dataProviderClass = CustomDataProvider.class)
 	public void loginApp(String username,String password)
-	{
+
+	{		
 		LoginPage login=new LoginPage(driver);
 		
 		HomePage home=login.loginToApplicationAsAdminUser(username, password);

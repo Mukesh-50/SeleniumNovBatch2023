@@ -10,7 +10,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -59,7 +61,8 @@ public class BrowserFactory
 	public static WebDriver startBrowser(String browser, String appURL, boolean cloud) {
 		WebDriver driver = null;
 
-		if (cloud) {
+		if (cloud) 
+		{
 			ChromeOptions opt = new ChromeOptions();
 
 			opt.setPlatformName("macOS Catalina");
@@ -106,11 +109,6 @@ public class BrowserFactory
 				map.put("download.default_directory", downloadDirectory);
 
 				opt.setExperimentalOption("prefs", map);
-
-				// opt.addArguments("--headless=new");
-
-				// opt.addArguments("--incognito");
-
 				driver = new ChromeDriver();
 			} else if (browser.equalsIgnoreCase("Firefox")) {
 				driver = new FirefoxDriver();
@@ -138,41 +136,100 @@ public class BrowserFactory
 
 	}
 
-	public static WebDriver startBrowser(String browser, String appURL) {
-		
+	public static WebDriver startBrowser(String browser, String appURL) 
+	{
 
-		if (browser.equalsIgnoreCase("Chrome")) 
+		if(ConfigReader.getProperty("cloud").equalsIgnoreCase("true"))
 		{
-			ChromeOptions opt = new ChromeOptions();
-
-			Map<String, String> map = new HashMap<String, String>();
-
-			String downloadDirectory = System.getProperty("user.dir") + "/DownloadedFiles/";
-
-			map.put("download.default_directory", downloadDirectory);
-
-			opt.setExperimentalOption("prefs", map);
 			
-			if(ConfigReader.getProperty("headless").equalsIgnoreCase("true"))
+			System.out.println("LOG:INFO- Cloud is set to true - Running Test On "+ConfigReader.getProperty("gridURL")+ConfigReader.getProperty("gridPort"));
+			
+			if (browser.equalsIgnoreCase("Chrome")) 
 			{
-				opt.addArguments("--headless=new");
-			}
+				ChromeOptions opt = new ChromeOptions();
 
-			driver = new ChromeDriver(opt);
+				URL hubURL;
+				try 
+				{
+					hubURL = new URL(ConfigReader.getProperty("gridURL")+":"+ConfigReader.getProperty("gridPort")+"/wd/hub");
+
+					driver = new RemoteWebDriver(hubURL, opt);
+
+				} catch (MalformedURLException e) {
+
+				}
+				
+			} else if (browser.equalsIgnoreCase("Firefox")) 
+			{
+				FirefoxOptions opt = new FirefoxOptions();
+
+				URL hubURL;
+				try 
+				{
+					hubURL = new URL(ConfigReader.getProperty("gridURL")+":"+ConfigReader.getProperty("gridPort")+"/wd/hub");
+
+					driver = new RemoteWebDriver(hubURL, opt);
+
+				} catch (MalformedURLException e) {
+
+				}
+			} else if (browser.equalsIgnoreCase("Edge")) 
+			{
+				EdgeOptions opt = new EdgeOptions();
+
+				URL hubURL;
+				try 
+				{
+					hubURL = new URL(ConfigReader.getProperty("gridURL")+":"+ConfigReader.getProperty("gridPort")+"/wd/hub");
+
+					driver = new RemoteWebDriver(hubURL, opt);
+
+				} catch (MalformedURLException e) {
+
+				}
+			} else 
+			{
+				System.out.println("Sorry Currently We Do Not Support " + browser);
+			}
+		
+		}
+		else
+		{
+			System.out.println("LOG:INFO- Cloud is set to False - Running Test On Local");
+
+			if (browser.equalsIgnoreCase("Chrome")) 
+			{
+				ChromeOptions opt = new ChromeOptions();
+
+				Map<String, String> map = new HashMap<String, String>();
+
+				String downloadDirectory = System.getProperty("user.dir") + "/DownloadedFiles/";
+
+				map.put("download.default_directory", downloadDirectory);
+
+				opt.setExperimentalOption("prefs", map);
+				
+				if(ConfigReader.getProperty("headless").equalsIgnoreCase("true"))
+				{
+					opt.addArguments("--headless=new");
+				}
+
+				driver = new ChromeDriver(opt);
+				
+			} else if (browser.equalsIgnoreCase("Firefox")) {
+				driver = new FirefoxDriver();
+			} else if (browser.equalsIgnoreCase("Edge")) {
+				driver = new EdgeDriver();
+			} else if (browser.equalsIgnoreCase("Safari")) {
+				driver = new SafariDriver();
+			} else {
+				System.out.println("Sorry Currently We Do Not Support " + browser);
+			}
 			
-		} else if (browser.equalsIgnoreCase("Firefox")) {
-			driver = new FirefoxDriver();
-		} else if (browser.equalsIgnoreCase("Edge")) {
-			driver = new EdgeDriver();
-		} else if (browser.equalsIgnoreCase("Safari")) {
-			driver = new SafariDriver();
-		} else {
-			System.out.println("Sorry Currently We Do Not Support " + browser);
 		}
 
 		driver.manage().window().maximize();
 
-		
 		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(Long.parseLong(ConfigReader.getProperty("pageLoad"))));
 
 		driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(Long.parseLong(ConfigReader.getProperty("scriptTimeOut"))));

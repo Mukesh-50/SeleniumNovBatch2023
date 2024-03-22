@@ -8,15 +8,16 @@
 		
 	</listeners>
 	
-  <test thread-count="5" name="Test">
+  <test thread-count="5" name="TestOnChrome">
+	  
+	 <parameter name="Browser" value="Chrome"></parameter> 
 	  
     <classes>
       
       <class name="com.ots.testcases.LoginToApplication"/>
-      
-      <class name="com.ots.testcases.RegisterNewUser"/>
-    
+          
     </classes>
   </test> 
   
+
 </suite> 
